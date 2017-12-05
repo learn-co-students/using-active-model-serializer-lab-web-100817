@@ -9,16 +9,17 @@
 $(function() {
   $(".js-more").on("click", function() {
     var id = $(this).data("id");
-    $.get("/products/" + id + "/description", function(description) {
-      $.get("/products/" + id + "/inventory", function(inventory) {
+    $.get("/products/" + id + ".json", function(post) {
         var inventoryText = "<strong>Available</strong>";
-        if(inventory === "false"){
+        if(post.inventory <= 0){
           inventoryText = "<strong>Sold Out</strong>";
         }
-        var descriptionText = "<p>" + description + "</p><p>" + inventoryText + "</p>";
+        var descriptionText = "<p>" + post.description + "</p><p>" + inventoryText + "</p>";
+        post.orders.forEach( order => {
+          descriptionText += `<br/> <p> Order Id: ${order.id} Created At: ${order.created_at}`;
+        })
         $("#product-" + id).html(descriptionText);
       });
     });
-  });
 });
 </script>
